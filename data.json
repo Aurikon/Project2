@@ -1,0 +1,78 @@
+{
+    "Student": {
+        "firstName": "z",
+        "lastName": "z",
+        "course": "z",
+        "section": "z"
+    }
+}{
+    "Student0": {
+        "firstName": "d",
+        "lastName": "d",
+        "course": "d",
+        "section": "d"
+    }
+}{
+    "Student0": {
+        "firstName": "b",
+        "lastName": "c",
+        "course": "b",
+        "section": "v"
+    }
+}{
+    "Student0": {
+        "firstName": "fgh",
+        "lastName": "ffdg",
+        "course": "f",
+        "section": "dfg"
+    }
+}{
+    "Student0": {
+        "firstName": "dfd",
+        "lastName": "vb",
+        "course": "dfg",
+        "section": "d"
+    }
+}{
+    "Student0": {
+        "firstName": "vc",
+        "lastName": "sdg",
+        "course": "fgh",
+        "section": "df"
+    }
+}{
+    "Student 0": {
+        "firstName": "fdgh",
+        "lastName": "hg",
+        "course": "dfg",
+        "section": "g"
+    }
+}{
+    "Student 0": {
+        "firstName": "sdf",
+        "lastName": "ssdf",
+        "course": "sdf",
+        "section": "sdf"
+    }
+}{
+    "Student 1": {
+        "firstName": "bnbv",
+        "lastName": "hgjg",
+        "course": "cv",
+        "section": "f"
+    }
+}{
+    "Student 2": {
+        "firstName": "k;",
+        "lastName": "kk,",
+        "course": "j",
+        "section": "j"
+    }
+}{
+    "Student 0": {
+        "firstName": "g",
+        "lastName": "g",
+        "course": "g",
+        "section": "g"
+    }
+}
