@@ -2,10 +2,12 @@
 #include <string>
 #include "cereal/access.hpp"
 #include "cereal/archives/json.hpp"
+#include <ostream>
 class Student
 {
 private:
 	friend class cereal::access;
+	unsigned int ID;
 	std::string firstName;
 	std::string lastName;
 	std::string course;
@@ -13,17 +15,22 @@ private:
 
 public:
 	Student();
-	Student(std::string firstName, std::string lastName, std::string course, std::string section);
+	Student(unsigned int ID, std::string firstName, std::string lastName, std::string course, std::string section);
 
-	template<class Archive>
-	void save(Archive& archive) const
-	{
-		archive(CEREAL_NVP(firstName), CEREAL_NVP(lastName), CEREAL_NVP(course), CEREAL_NVP(section));
-	}
-	template<class Archive>
-	void load(Archive& archive)
-	{
-		archive(CEREAL_NVP(firstName), CEREAL_NVP(lastName), CEREAL_NVP(course), CEREAL_NVP(section));
-	}
+	unsigned int GetID();
+	std::string GetFirstName();
+	std::string GetLastName();
+	std::string GetCourse();
+	std::string GetSection();
 	
+
+	void SetID(unsigned int ID);
+	void SetFirstName(std::string firstName);
+	void SetLastName(std::string lastName);
+	void SetCourse(std::string course);
+	void SetSection(std::string section);
+
+	friend std::ostream& operator<<(std::ostream& out, const Student& s);
+	friend bool operator==(const Student& s, unsigned int elem);
+
 };

@@ -1167,7 +1167,7 @@ public:
     MemberIterator MemberBegin()            { CEREAL_RAPIDJSON_ASSERT(IsObject()); return MemberIterator(GetMembersPointer()); }
     //! \em Past-the-end member iterator
     /*! \pre IsObject() == true */
-    MemberIterator MemberEnd()              { CEREAL_RAPIDJSON_ASSERT(IsObject()); return MemberIterator(GetMembersPointer() + data_.o.size); }
+    MemberIterator MemberEnd() { CEREAL_RAPIDJSON_ASSERT(IsObject()); return MemberIterator(GetMembersPointer() + data_.o.size); }
 
     //! Request the object to have enough capacity to store members.
     /*! \param newCapacity  The capacity that the object at least need to have.
