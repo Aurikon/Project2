@@ -1,4 +1,3 @@
-
 #include "functions.h"
 
 void Menu()
@@ -20,11 +19,7 @@ void ToJSON(std::vector<Student>& studentList)
 	oarchive(cereal::make_nvp("Student Count:", studentList.size()));
 	for (std::size_t i = 0; i < studentList.size(); ++i)
 	{
-		oarchive(cereal::make_nvp("Student ID: " + std::to_string(i), studentList[i].GetID()));
-		oarchive(cereal::make_nvp("Student " + std::to_string(i) + " First Name:", studentList[i].GetFirstName()));
-		oarchive(cereal::make_nvp("Student " + std::to_string(i) + " Last Name:", studentList[i].GetLastName()));
-		oarchive(cereal::make_nvp("Student " + std::to_string(i) + " Course:", studentList[i].GetCourse()));
-		oarchive(cereal::make_nvp("Student " + std::to_string(i) + " Section:", studentList[i].GetSection()));
+		oarchive(studentList[i]);
 	}
 }
 
@@ -66,7 +61,6 @@ void Add(std::vector<Student>& studentList)
 		std::cout << "Enter section    : ";
 		std::cin >> section;
 
-
 		studentList.push_back(Student(ID, firstName, lastName, course, section));
 		ToJSON(studentList);
 
@@ -101,19 +95,9 @@ void StudentListFill(std::vector<Student>& studentList)
 		studentList.resize(size);
 		for (int i = 0; i < studentList.size(); ++i)
 		{
-			unsigned int ID{};
-			std::string firstName{};
-			std::string lastName{};
-			std::string course{};
-			std::string section{};
-
-			iarchive(ID);
-			iarchive(firstName);
-			iarchive(lastName);
-			iarchive(course);
-			iarchive(section);
-
-			studentList[i] = Student(ID, firstName, lastName, course, section);
+			Student s;
+			iarchive(s);
+			studentList[i] = s;	
 		}
 	}
 	catch (std::runtime_error& e)
