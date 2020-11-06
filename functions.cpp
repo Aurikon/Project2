@@ -1,20 +1,9 @@
 #include "functions.h"
 
-void Menu()
-{
-	std::cout << "====== STUDENT DATABASE MANAGMENT SYSTEM ====== \n\n\n\n\n";
-	std::cout << "\t 1.Add		Records \n";
-	std::cout << "\t 2.List		Records \n";
-	std::cout << "\t 3.Modify	Records \n";
-	std::cout << "\t 4.Delete	Records \n";
-	std::cout << "\t 5.Exit		Records \n";
-	std::cout << "\t Select Your Choice :=> ";
 
-
-}
-void ToJSON(std::vector<Student>& studentList)
+void databaseAccess::ToJSON()
 {
-	std::ofstream os("data.json");
+	std::ofstream os("data.json", std::ios::in);
 	cereal::JSONOutputArchive oarchive(os);
 	oarchive(cereal::make_nvp("Student Count:", studentList.size()));
 	for (std::size_t i = 0; i < studentList.size(); ++i)
@@ -23,9 +12,9 @@ void ToJSON(std::vector<Student>& studentList)
 	}
 }
 
-void List(std::vector<Student>& studentList)
+void databaseAccess::List()
 {
-	system("cls");
+	system("clear");
 	for (auto& elem : studentList)
 	{
 		std::cout << elem << "\n";
@@ -33,61 +22,13 @@ void List(std::vector<Student>& studentList)
 	char c{};
 	std::cout << "Press any key to return menu ";
 	std::cin >> c;
-	system("cls");
+	system("clear");
 }
 
-void Add(std::vector<Student>& studentList)
-{
-	system("cls");
-	bool adding = true;
-	while (adding)
-	{
-		unsigned long int ID = studentList.size();
-		std::string firstName{};
-		std::string lastName{};
-		std::string course{};
-		std::string section{};
-
-
-		std::cout << "Enter First Name : ";
-		std::cin >> firstName;
-
-		std::cout << "Enter Last Name  : ";
-		std::cin >> lastName;
-
-		std::cout << "Enter course     : ";
-		std::cin >> course;
-
-		std::cout << "Enter section    : ";
-		std::cin >> section;
-
-		studentList.push_back(Student(ID, firstName, lastName, course, section));
-		ToJSON(studentList);
-
-
-		while (1)
-		{
-			char c;
-			std::cout << "Add Another Record <Y/N> ";
-			std::cin >> c;
-			if (c == 'N' || c == 'n')
-			{
-				adding = false;
-				break;
-			}
-			else if (c == 'y' || c == 'Y')
-			{
-				break;
-			}
-		}
-	}
-	system("cls");
-}
-
-void StudentListFill(std::vector<Student>& studentList)
+void databaseAccess::StudentListFill()
 {
 	std::size_t size{};
-	std::ifstream is("data.json");
+	std::ifstream is("data.json", std::ios::out);
 	try
 	{
 		cereal::JSONInputArchive iarchive(is);
@@ -106,62 +47,107 @@ void StudentListFill(std::vector<Student>& studentList)
 	}
 }
 
-void Delete(std::vector<Student>& studentList)
+void databaseAccess::Delete()
 {
-	system("cls");
+	system("clear");
 
 	std::cout << "Enter student ID for delete: ";
 	unsigned int ID{};
 	std::cin >> ID;
-	auto it = std::find(studentList.begin(), studentList.end(), ID);
+	if(ID > studentList.size())
+	{
+		std::cout << "No such student with ID " << ID << "\n";
+		return;
+	}
+	auto it = studentList.begin() + ID;
 
 	studentList.erase(it);
 	for (std::size_t i = 0; i < studentList.size(); ++i)
 	{
 		studentList[i].SetID(i);
 	}
-	ToJSON(studentList);
+	ToJSON();
 
-	system("cls");
+	system("clear");
 }
 
-void Modify(std::vector<Student>& studentList)
+void databaseAccess::Add()
 {
-	system("cls");
-
-	std::cout << "Enter student ID for modify: ";
-	unsigned int ID{};
-	std::cin >> ID;
-	auto it = std::find(studentList.begin(), studentList.end(), ID);
-
-	std::cout << "Current First Name: " << it->GetFirstName() << "\n";
-	std::cout << "Current Last  Name: " << it->GetLastName() << "\n";
-	std::cout << "Current Course    : " << it->GetCourse() << "\n";
-	std::cout << "Current Section   : " << it->GetSection() << "\n\n";
-
-	std::string firstName{};
-	std::string lastName{};
-	std::string course{};
-	std::string section{};
-
-	std::cout << "Enter First Name : ";
-	std::cin >> firstName;
-	it->SetFirstName(firstName);
-
-	std::cout << "Enter Last Name  : ";
-	std::cin >> lastName;
-	it->SetLastName(lastName);
-
-	std::cout << "Enter course     : ";
-	std::cin >> course;
-	it->SetCourse(course);
-
-	std::cout << "Enter section    : ";
-	std::cin >> section;
-	it->SetSection(section);
+        system("clear");
+        bool adding = true;
+        while (adding)
+        {
+                unsigned long int ID = studentList.size();
+                std::string firstName{};
+                std::string lastName{};
+                std::string course{};
+                std::string section{};
 
 
-	ToJSON(studentList);
+                std::cout << "Enter First Name : ";
+                std::cin >> firstName;
 
-	system("cls");
+                std::cout << "Enter Last Name  : ";
+                std::cin >> lastName;
+
+                std::cout << "Enter course     : ";
+                std::cin >> course;
+
+                std::cout << "Enter section    : ";
+                std::cin >> section;
+
+                studentList.push_back(Student(ID, firstName, lastName, course, section));
+                ToJSON();
+				while (1)
+                {
+                        char c;
+                        std::cout << "Add Another Record <Y/N> ";
+                        std::cin >> c;
+                        if (c == 'N' || c == 'n')
+                        {
+                                adding = false;
+                                break;
+                        }
+                        else if (c == 'y' || c == 'Y')
+                        {
+                                break;
+                        }
+                }
+        }
+        system("clear");
+}
+	
+void databaseAccess::Modify()
+{
+        system("clear");
+
+        std::cout << "Enter student ID for modify: ";
+        unsigned int ID{};
+        std::cin >> ID;
+        
+
+        std::cout << "Current First Name: " << studentList[ID].GetFirstName() << "\n";
+        std::cout << "Current Last  Name: " << studentList[ID].GetLastName() << "\n";  
+        std::cout << "Current Course    : " << studentList[ID].GetCourse() << "\n";    
+        std::cout << "Current Section   : " << studentList[ID].GetSection() << "\n\n";
+
+        std::string firstName{};
+        std::string lastName{};
+        std::string course{};
+        std::string section{};
+
+        std::cout << "Enter First Name : ";
+        std::cin >> firstName;
+        studentList[ID].SetFirstName(firstName);
+
+        std::cout << "Enter Last Name  : ";
+        std::cin >> lastName;
+        studentList[ID].SetLastName(lastName);
+
+        std::cout << "Enter course     : ";
+        std::cin >> course;
+        studentList[ID].SetCourse(course);
+		ToJSON();
+
+        system("clear");
 }
