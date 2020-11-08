@@ -17,7 +17,7 @@ int main()
 {
 	databaseAccess database;	
 	Menu();
-	
+	database.StudentListFill();
 	int choice{};
 	std::cin >> choice;
 	while (choice != 5)
@@ -47,7 +47,8 @@ int main()
 		case 5:
 			break;
 		default:
-			std::cout << "Wrong choice. Please, choice number 1-5";
+			std::cout << "Wrong choice. Please, choice number 1-5 \n";
+			std::cin >> choice;
 			break;
 		}
 	}
