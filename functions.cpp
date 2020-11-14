@@ -148,6 +148,10 @@ void databaseAccess::Modify()
     std::cout << "Enter course     : ";
     std::cin >> course;
     students[ID].SetCourse(course);
+
+    std::cout << "Enter section    : ";
+    std::cin >> section;
+    students[ID].SetSection(section);
     ToJSON();
 
     system("clear");
