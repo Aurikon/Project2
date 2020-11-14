@@ -6,16 +6,25 @@
 #include <fstream>
 #include <exception>
 
-void Menu();
 
-void ToJSON(std::vector<Student>& studentList);
 
-void List(std::vector<Student>& studentList);
+class databaseAccess
+{
+private:
+	std::vector<Student> students{};
 
-void Add(std::vector<Student>& studentList);
-
-void StudentListFill(std::vector<Student>& studentList);
-
-void Modify(std::vector<Student>& studentList);
-
-void Delete(std::vector<Student>& studentList);
+public:
+	
+	void ToJSON();
+	
+	void List();
+	
+	void Add();
+	
+	void StudentsFill();
+	
+	void Modify();
+	
+	void Delete();
+	
+};

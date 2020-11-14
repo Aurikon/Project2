@@ -37,12 +37,7 @@ public:
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(cereal::make_nvp("Student ID: ", ID),
-			cereal::make_nvp("Student " + std::to_string(ID) + " First Name:", firstName),
-			cereal::make_nvp("Student " + std::to_string(ID) + " Last Name:", lastName),
-			cereal::make_nvp("Student " + std::to_string(ID) + " Course:", course),
-			cereal::make_nvp("Student " + std::to_string(ID) + " Section:", section));
-
+		archive(CEREAL_NVP(ID), CEREAL_NVP(firstName), CEREAL_NVP(lastName), CEREAL_NVP(course), CEREAL_NVP(section));
 	}
 
 };
