@@ -8,6 +8,8 @@ You can:
 4. Delete student from databse
 
 # Installation
+cmake version: 3.16.3
+g++ version 9.3.0
 Create folder. In terminal write cmake (/path/to/project/files). Run ./student_database_managment
 
 # Tools used
