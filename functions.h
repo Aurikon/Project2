@@ -6,25 +6,30 @@
 #include <fstream>
 #include <exception>
 
-
-
-class databaseAccess
+class DatabaseAccess
 {
 private:
+	
 	std::vector<Student> students{};
 
+	void IDCorrectionAfterDelete();
+	bool IsIDAviable(unsigned int ID);
 public:
 	
-	void ToJSON();
-	
+	int Input();
+
+	void Menu();
+
 	void List();
 	
 	void Add();
 	
-	void StudentsFill();
-	
 	void Modify();
 	
 	void Delete();
+
+	void FromJSON();
+
+	void ToJSON();
 	
 };

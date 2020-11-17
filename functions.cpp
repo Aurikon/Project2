@@ -1,34 +1,172 @@
+#ifdef __linux__ 
+#define SYSTEM_ARG "clear"
+#elif _WIN32
+#define SYSTEM_ARG "cls"
+#else 
+#error "OS not supported!"
+#endif
+
 #include "functions.h"
 
-
-void databaseAccess::ToJSON()
+void ClearConsole()
 {
-    std::ofstream os("data.json");
-    cereal::JSONOutputArchive oarchive(os);
-    oarchive.setNextName("Size");
-    oarchive(students.size());
+    if (system(SYSTEM_ARG))
+    {
+        std::cout << "Something is wrong in function ClearConsole()\n";
+    }
+}
+
+void DatabaseAccess::IDCorrectionAfterDelete()
+{
     for (std::size_t i = 0; i < students.size(); ++i)
     {
-        std::string tmp = "Student " + std::to_string(students[i].GetID());
-        oarchive.setNextName(tmp.c_str());
-        oarchive(students[i]);
+        students[i].SetID(i);
     }
 }
 
-void databaseAccess::List()
+bool DatabaseAccess::IsIDAviable(unsigned int ID)
 {
-    system("clear");
-    for (auto& elem : students)
-    {
-        std::cout << elem << "\n";
-    }
-    char c{};
-    std::cout << "Press any key to return menu ";
-    std::cin >> c;
-    system("clear");
+    return ID < students.size();
 }
 
-void databaseAccess::StudentsFill()
+int DatabaseAccess::Input()
+{
+    std::string inputString{};
+    int number{};
+    bool isNumber = false;
+
+    while (!isNumber)
+    {
+        try
+        {
+            std::getline(std::cin, inputString);
+            number = std::stoi(inputString);
+            isNumber = true;
+        }
+        catch (std::invalid_argument& e)
+        {
+            std::cout << "Invalid input \n";
+        }
+    }
+    return number;
+}
+
+void DatabaseAccess::Menu()
+{
+    ClearConsole();
+
+    std::cout << "====== STUDENT DATABASE MANAGMENT SYSTEM ====== \n\n\n\n\n";
+    std::cout << "\t 1.Add          Records \n";
+    std::cout << "\t 2.List         Records \n";
+    std::cout << "\t 3.Modify       Records \n";
+    std::cout << "\t 4.Delete       Records \n";
+    std::cout << "\t 5.Exit         Records \n";
+    std::cout << "\t Select Your Choice :=> ";
+}
+
+void DatabaseAccess::Add()
+{
+    ClearConsole();
+    bool adding = true;
+
+    while (adding)
+    {
+        Student inputStudent;
+        std::cin >> inputStudent;
+        inputStudent.SetID(students.size());
+
+        students.push_back(inputStudent);
+        ToJSON();
+
+        while (true)
+        {
+            std::string in{};
+            std::cout << "Add Another Record <Y/N> \n";
+            std::cin.ignore();
+            std::getline(std::cin, in);
+            if (in == "N" || in == "n" )
+            {
+                adding = false;
+                break;
+            }
+            else if (in == "y" || in == "Y" )
+            {
+                break;
+            }
+        }
+    }
+    ClearConsole();
+}
+
+void DatabaseAccess::List()
+{
+    ClearConsole();
+    for (auto& student : students)
+    {
+        std::cout << student << "\n";
+    }
+
+    std::string in{};
+    std::cout << "Press any key to return menu ";
+    std::getline(std::cin, in);
+
+    ClearConsole();
+}
+
+void DatabaseAccess::Modify()
+{
+    ClearConsole();
+
+    std::cout << "Enter student ID for modify: ";
+    unsigned int ID = Input();
+
+    if (IsIDAviable(ID))
+    {
+        std::cout << "Current First Name: " << students[ID].GetFirstName() << "\n";
+        std::cout << "Current Last  Name: " << students[ID].GetLastName() << "\n";
+        std::cout << "Current Course    : " << students[ID].GetCourse() << "\n";
+        std::cout << "Current Section   : " << students[ID].GetSection() << "\n\n";
+        std::cin >> students[ID];
+    }
+    else
+    {
+        std::cout << "ID not found \n";
+        std::cout << "Press any key to return menu ";
+        std::string in{};
+        std::getline(std::cin, in);
+    }
+   
+    ToJSON();
+
+    ClearConsole();
+}
+
+void DatabaseAccess::Delete()
+{
+    ClearConsole();
+
+    std::cout << "Enter student ID for delete: ";
+
+    unsigned int ID = Input();
+    if (IsIDAviable(ID))
+    {
+        auto it = students.begin() + ID;
+        students.erase(it);
+    }
+    else
+    {
+        std::cout << "ID not found \n";
+        std::cout << "Press any key to return menu ";
+        std::string in{};
+        std::getline(std::cin, in);
+    }
+    IDCorrectionAfterDelete();
+    ToJSON();
+
+    ClearConsole();
+}
+
+void DatabaseAccess::FromJSON()
 {
     std::size_t size{};
     std::ifstream is("data.json");
@@ -36,123 +174,32 @@ void databaseAccess::StudentsFill()
     {
         cereal::JSONInputArchive iarchive(is);
         iarchive(size);
+
         students.resize(size);
+
         for (int i = 0; i < students.size(); ++i)
         {
             iarchive(students[i]);
         }
     }
-    catch (std::runtime_error& e)
+    catch (std::runtime_error& EmptyFile)
     {
         size = 0;
     }
 }
 
-void databaseAccess::Delete()
+void DatabaseAccess::ToJSON()
 {
-    system("clear");
+    std::ofstream os("data.json");
+    cereal::JSONOutputArchive oarchive(os);
 
-    std::cout << "Enter student ID for delete: ";
-    unsigned int ID{};
-    std::cin >> ID;
-    if (ID > students.size())
-    {
-        std::cout << "No such student with ID " << ID << "\n";
-        return;
-    }
-    auto it = students.begin() + ID;
+    oarchive.setNextName("Students_Size");
+    oarchive(students.size());
 
-    students.erase(it);
     for (std::size_t i = 0; i < students.size(); ++i)
     {
-        students[i].SetID(i);
+        std::string StudentValueForJSON = "Student " + std::to_string(students[i].GetID());
+        oarchive.setNextName(StudentValueForJSON.c_str());
+        oarchive(students[i]);
     }
-    ToJSON();
-
-    system("clear");
-}
-
-void databaseAccess::Add()
-{
-    system("clear");
-    bool adding = true;
-    while (adding)
-    {
-        unsigned long int ID = students.size();
-        std::string firstName{};
-        std::string lastName{};
-        std::string course{};
-        std::string section{};
-
-
-        std::cout << "Enter First Name : ";
-        std::cin >> firstName;
-
-        std::cout << "Enter Last Name  : ";
-        std::cin >> lastName;
-
-        std::cout << "Enter course     : ";
-        std::cin >> course;
-
-        std::cout << "Enter section    : ";
-        std::cin >> section;
-
-        students.push_back(Student(ID, firstName, lastName, course, section));
-        ToJSON();
-        while (1)
-        {
-            char c;
-            std::cout << "Add Another Record <Y/N> ";
-            std::cin >> c;
-            if (c == 'N' || c == 'n')
-            {
-                adding = false;
-                break;
-            }
-            else if (c == 'y' || c == 'Y')
-            {
-                break;
-            }
-        }
-    }
-    system("clear");
-}
-
-void databaseAccess::Modify()
-{
-    system("clear");
-
-    std::cout << "Enter student ID for modify: ";
-    unsigned int ID{};
-    std::cin >> ID;
-
-
-    std::cout << "Current First Name: " << students[ID].GetFirstName() << "\n";
-    std::cout << "Current Last  Name: " << students[ID].GetLastName() << "\n";
-    std::cout << "Current Course    : " << students[ID].GetCourse() << "\n";
-    std::cout << "Current Section   : " << students[ID].GetSection() << "\n\n";
-
-    std::string firstName{};
-    std::string lastName{};
-    std::string course{};
-    std::string section{};
-
-    std::cout << "Enter First Name : ";
-    std::cin >> firstName;
-    students[ID].SetFirstName(firstName);
-
-    std::cout << "Enter Last Name  : ";
-    std::cin >> lastName;
-    students[ID].SetLastName(lastName);
-
-    std::cout << "Enter course     : ";
-    std::cin >> course;
-    students[ID].SetCourse(course);
-
-    std::cout << "Enter section    : ";
-    std::cin >> section;
-    students[ID].SetSection(section);
-    ToJSON();
-
-    system("clear");
 }

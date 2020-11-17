@@ -31,6 +31,7 @@ public:
 	void SetSection(std::string section);
 
 	friend std::ostream& operator<<(std::ostream& out, const Student& s);
+	friend std::istream& operator>>(std::istream& in, Student& s);
 	friend bool operator==(const Student& s, unsigned int elem);
 
 
