@@ -82,7 +82,6 @@ void DatabaseAccess::Add()
         {
             std::string in{};
             std::cout << "Add Another Record <Y/N> \n";
-            std::cin.ignore();
             std::getline(std::cin, in);
             if (in == "N" || in == "n" )
             {
@@ -93,7 +92,7 @@ void DatabaseAccess::Add()
             {
                 break;
             }
-        }
+         }
     }
     ClearConsole();
 }
@@ -127,10 +126,14 @@ void DatabaseAccess::Modify()
         std::cout << "Current Course    : " << students[ID].GetCourse() << "\n";
         std::cout << "Current Section   : " << students[ID].GetSection() << "\n\n";
         std::cin >> students[ID];
+
+        std::string in{};
+        std::cout << "Changes made successfully\nPress any key to return menu \n";
+        std::getline(std::cin, in);
     }
     else
     {
-        std::cout << "ID not found \n";
+        std::cout << "ID not found\n";
         std::cout << "Press any key to return menu ";
         std::string in{};
         std::getline(std::cin, in);
@@ -155,7 +158,7 @@ void DatabaseAccess::Delete()
     }
     else
     {
-        std::cout << "ID not found \n";
+        std::cout << "ID not found. Check students list and choose correct ID \n";
         std::cout << "Press any key to return menu ";
         std::string in{};
         std::getline(std::cin, in);

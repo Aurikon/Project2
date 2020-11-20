@@ -73,7 +73,8 @@ std::istream& operator>>(std::istream& in, Student& s)
 
 	std::cout << "Enter section    : ";
 	in >> s.section;
-
+	
+	in.get();
 	return in;
 }
 
