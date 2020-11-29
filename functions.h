@@ -31,5 +31,8 @@ public:
 	void FromJSON();
 
 	void ToJSON();
+
+	void ClearFile();
 	
+	bool IsFileEmpty(std::ifstream& is);
 };

@@ -8,6 +8,8 @@
 
 #include "functions.h"
 
+#define FileName "data.json"
+
 void ClearConsole()
 {
     if (system(SYSTEM_ARG))
@@ -172,7 +174,12 @@ void DatabaseAccess::Delete()
 void DatabaseAccess::FromJSON()
 {
     std::size_t size{};
-    std::ifstream is("data.json");
+    std::ifstream is(FileName);
+    if (IsFileEmpty(is))
+    {
+        students.resize(0);
+        ToJSON();
+    }
     try
     {
         cereal::JSONInputArchive iarchive(is);
@@ -187,13 +194,23 @@ void DatabaseAccess::FromJSON()
     }
     catch (std::runtime_error& EmptyFile)
     {
-        size = 0;
+        std::cout << "\n The file " << FileName << " is damaged \n Clear this file? <Y/N>";
+        std::string in;
+        std::getline(std::cin, in);
+        if (in == "N" || in == "n")
+        {
+            exit(0);
+        }
+        else if (in == "y" || in == "Y")
+        {
+            ClearFile();
+        }
     }
 }
 
 void DatabaseAccess::ToJSON()
 {
-    std::ofstream os("data.json");
+    std::ofstream os(FileName);
     cereal::JSONOutputArchive oarchive(os);
 
     oarchive.setNextName("Students_Size");
@@ -205,4 +222,16 @@ void DatabaseAccess::ToJSON()
         oarchive.setNextName(StudentValueForJSON.c_str());
         oarchive(students[i]);
     }
+}
+
+void DatabaseAccess::ClearFile()
+{
+    std::ofstream ofs;
+    ofs.open("test.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+}
+
+bool DatabaseAccess::IsFileEmpty(std::ifstream& is)
+{
+    return is.peek() == std::ifstream::traits_type::eof();
 }
