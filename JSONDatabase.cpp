@@ -1,24 +1,9 @@
-#ifdef __linux__ 
-#define SYSTEM_ARG "clear"
-#elif _WIN32
-#define SYSTEM_ARG "cls"
-#else 
-#error "OS not supported!"
-#endif
-
-#include "functions.h"
+#include "UserInterface.h"
+#include "JSONDatabase.h"
 
 #define FileName "data.json"
 
-void ClearConsole()
-{
-    if (system(SYSTEM_ARG))
-    {
-        std::cout << "Something is wrong in function ClearConsole()\n";
-    }
-}
-
-void DatabaseAccess::IDCorrectionAfterDelete()
+void JSONDatabase::IDCorrectionAfterDelete()
 {
     for (std::size_t i = 0; i < students.size(); ++i)
     {
@@ -26,49 +11,13 @@ void DatabaseAccess::IDCorrectionAfterDelete()
     }
 }
 
-bool DatabaseAccess::IsIDAviable(unsigned int ID)
+bool JSONDatabase::IsIDAviable(unsigned int ID)
 {
     return ID < students.size();
 }
 
-int DatabaseAccess::Input()
+void JSONDatabase::Add()
 {
-    std::string inputString{};
-    int number{};
-    bool isNumber = false;
-
-    while (!isNumber)
-    {
-        try
-        {
-            std::getline(std::cin, inputString);
-            number = std::stoi(inputString);
-            isNumber = true;
-        }
-        catch (std::invalid_argument& e)
-        {
-            std::cout << "Invalid input \n";
-        }
-    }
-    return number;
-}
-
-void DatabaseAccess::Menu()
-{
-    ClearConsole();
-
-    std::cout << "====== STUDENT DATABASE MANAGMENT SYSTEM ====== \n\n\n\n\n";
-    std::cout << "\t 1.Add          Records \n";
-    std::cout << "\t 2.List         Records \n";
-    std::cout << "\t 3.Modify       Records \n";
-    std::cout << "\t 4.Delete       Records \n";
-    std::cout << "\t 5.Exit         Records \n";
-    std::cout << "\t Select Your Choice :=> ";
-}
-
-void DatabaseAccess::Add()
-{
-    ClearConsole();
     bool adding = true;
 
     while (adding)
@@ -78,7 +27,7 @@ void DatabaseAccess::Add()
         inputStudent.SetID(students.size());
 
         students.push_back(inputStudent);
-        ToJSON();
+        ToFile();
 
         while (true)
         {
@@ -96,12 +45,10 @@ void DatabaseAccess::Add()
             }
          }
     }
-    ClearConsole();
 }
 
-void DatabaseAccess::List()
+void JSONDatabase::List()
 {
-    ClearConsole();
     for (auto& student : students)
     {
         std::cout << student << "\n";
@@ -110,16 +57,12 @@ void DatabaseAccess::List()
     std::string in{};
     std::cout << "Press any key to return menu ";
     std::getline(std::cin, in);
-
-    ClearConsole();
 }
 
-void DatabaseAccess::Modify()
+void JSONDatabase::Modify()
 {
-    ClearConsole();
-
     std::cout << "Enter student ID for modify: ";
-    unsigned int ID = Input();
+    unsigned int ID = UserInterface::NubmerInput();
 
     if (IsIDAviable(ID))
     {
@@ -141,18 +84,15 @@ void DatabaseAccess::Modify()
         std::getline(std::cin, in);
     }
    
-    ToJSON();
+    ToFile();
 
-    ClearConsole();
 }
 
-void DatabaseAccess::Delete()
+void JSONDatabase::Delete()
 {
-    ClearConsole();
-
     std::cout << "Enter student ID for delete: ";
 
-    unsigned int ID = Input();
+    unsigned int ID = UserInterface::NubmerInput();
     if (IsIDAviable(ID))
     {
         auto it = students.begin() + ID;
@@ -166,19 +106,18 @@ void DatabaseAccess::Delete()
         std::getline(std::cin, in);
     }
     IDCorrectionAfterDelete();
-    ToJSON();
+    ToFile();
 
-    ClearConsole();
 }
 
-void DatabaseAccess::FromJSON()
+void JSONDatabase::FromFile()
 {
     std::size_t size{};
     std::ifstream is(FileName);
     if (IsFileEmpty(is))
     {
         students.resize(0);
-        ToJSON();
+        ToFile();
     }
     try
     {
@@ -187,7 +126,7 @@ void DatabaseAccess::FromJSON()
 
         students.resize(size);
 
-        for (int i = 0; i < students.size(); ++i)
+        for (std::size_t i = 0; i < students.size(); ++i)
         {
             iarchive(students[i]);
         }
@@ -203,12 +142,12 @@ void DatabaseAccess::FromJSON()
         }
         else if (in == "y" || in == "Y")
         {
-            ClearFile();
+            ClearFile(FileName);
         }
     }
 }
 
-void DatabaseAccess::ToJSON()
+void JSONDatabase::ToFile()
 {
     std::ofstream os(FileName);
     cereal::JSONOutputArchive oarchive(os);
@@ -222,16 +161,4 @@ void DatabaseAccess::ToJSON()
         oarchive.setNextName(StudentValueForJSON.c_str());
         oarchive(students[i]);
     }
-}
-
-void DatabaseAccess::ClearFile()
-{
-    std::ofstream ofs;
-    ofs.open("test.txt", std::ofstream::out | std::ofstream::trunc);
-    ofs.close();
-}
-
-bool DatabaseAccess::IsFileEmpty(std::ifstream& is)
-{
-    return is.peek() == std::ifstream::traits_type::eof();
 }

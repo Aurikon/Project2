@@ -1,33 +1,42 @@
-#include "functions.h"
-
+#include "JSONDatabase.h"
+#include "UserInterface.h"
 
 int main()
 {
-	DatabaseAccess database;	
-	database.Menu();
-	database.FromJSON();
+	DatabaseAccessInterface* database = new JSONDatabase();	
+	UserInterface UI;
+	UI.Menu();
+	database->FromFile();
 
 	int choice{};
 	while (choice !=5)
 	{
-		choice = database.Input();
+		choice = UI.NubmerInput();
 		switch (choice)
 		{
 		case 1:
-			database.Add();
-			database.Menu();
+			UI.ClearConsole();
+			database->Add();
+			UI.ClearConsole();
+			UI.Menu();
 			break;
 		case 2:
-			database.List();
-			database.Menu();
+			UI.ClearConsole();
+			database->List();
+			UI.ClearConsole();
+			UI.Menu();
 			break;
 		case 3:
-			database.Modify();
-			database.Menu();
+			UI.ClearConsole();
+			database->Modify();
+			UI.ClearConsole();
+			UI.Menu();
 			break;
 		case 4:
-			database.Delete();
-			database.Menu();
+			UI.ClearConsole();
+			database->Delete();
+			UI.ClearConsole();
+			UI.Menu();
 			break;
 		case 5:
 			break;
@@ -36,7 +45,7 @@ int main()
 		}
 	}
 	
-	database.ToJSON();
+	database->ToFile();
 
 	return 0;
 }
