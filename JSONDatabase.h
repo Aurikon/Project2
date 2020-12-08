@@ -1,8 +1,6 @@
 #ifndef JSONDATABASE_H
 #define JSONDATABASE_H
 
-#include "FileInputOutput.h"
-#include "Student.h"
 #include "DatabaseAccessInterface.h"
 #include <vector>
 
@@ -13,16 +11,18 @@ private:
 	std::vector<Student> students{};
 
 	void IDCorrectionAfterDelete();
-	bool IsIDAviable(unsigned int ID);
 public:
+	bool IsIDAviable(unsigned int ID) override;
+
+	Student GetStudentByID(unsigned int ID) override;
 
 	void ToFile() override;
 	void FromFile() override;
 
-	void Add() override;
-	void List() override;
-	void Modify() override;
-	void Delete() override;
+	void Add(Student& s) override;
+	std::vector<Student> List() override;
+	void Modify(unsigned int ID, std::string firstName, std::string lastName, std::string course, std::string section) override;
+	void Delete(unsigned int ID) override;
 };
 
 #endif

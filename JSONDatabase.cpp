@@ -16,98 +16,37 @@ bool JSONDatabase::IsIDAviable(unsigned int ID)
     return ID < students.size();
 }
 
-void JSONDatabase::Add()
+Student JSONDatabase::GetStudentByID(unsigned int ID)
 {
-    bool adding = true;
-
-    while (adding)
-    {
-        Student inputStudent;
-        std::cin >> inputStudent;
-        inputStudent.SetID(students.size());
-
-        students.push_back(inputStudent);
-        ToFile();
-
-        while (true)
-        {
-            std::string in{};
-            std::cout << "Add Another Record <Y/N> \n";
-            std::getline(std::cin, in);
-            if (in == "N" || in == "n" )
-            {
-                adding = false;
-                break;
-            }
-            else if (in == "y" || in == "Y" )
-            {
-                break;
-            }
-         }
-    }
+    return students[ID];
 }
-
-void JSONDatabase::List()
+void JSONDatabase::Add(Student& s)
 {
-    for (auto& student : students)
-    {
-        std::cout << student << "\n";
-    }
-
-    std::string in{};
-    std::cout << "Press any key to return menu ";
-    std::getline(std::cin, in);
-}
-
-void JSONDatabase::Modify()
-{
-    std::cout << "Enter student ID for modify: ";
-    unsigned int ID = UserInterface::NubmerInput();
-
-    if (IsIDAviable(ID))
-    {
-        std::cout << "Current First Name: " << students[ID].GetFirstName() << "\n";
-        std::cout << "Current Last  Name: " << students[ID].GetLastName() << "\n";
-        std::cout << "Current Course    : " << students[ID].GetCourse() << "\n";
-        std::cout << "Current Section   : " << students[ID].GetSection() << "\n\n";
-        std::cin >> students[ID];
-
-        std::string in{};
-        std::cout << "Changes made successfully\nPress any key to return menu \n";
-        std::getline(std::cin, in);
-    }
-    else
-    {
-        std::cout << "ID not found\n";
-        std::cout << "Press any key to return menu ";
-        std::string in{};
-        std::getline(std::cin, in);
-    }
-   
+    s.SetID(students.size());
+    students.push_back(s);
     ToFile();
-
 }
 
-void JSONDatabase::Delete()
+std::vector<Student> JSONDatabase::List()
 {
-    std::cout << "Enter student ID for delete: ";
+    return students;
+}
 
-    unsigned int ID = UserInterface::NubmerInput();
-    if (IsIDAviable(ID))
-    {
-        auto it = students.begin() + ID;
-        students.erase(it);
-    }
-    else
-    {
-        std::cout << "ID not found. Check students list and choose correct ID \n";
-        std::cout << "Press any key to return menu ";
-        std::string in{};
-        std::getline(std::cin, in);
-    }
+void JSONDatabase::Modify(unsigned int ID, std::string firstName, std::string lastName, std::string course, std::string section)
+{
+    students[ID].SetFirstName(firstName);
+    students[ID].SetLastName(lastName);
+    students[ID].SetCourse(course);
+    students[ID].SetSection(section);
+    ToFile();
+}
+
+void JSONDatabase::Delete(unsigned int ID)
+{
+    auto it = students.begin() + ID;
+    students.erase(it);
     IDCorrectionAfterDelete();
     ToFile();
-
 }
 
 void JSONDatabase::FromFile()
@@ -162,3 +101,4 @@ void JSONDatabase::ToFile()
         oarchive(students[i]);
     }
 }
+
